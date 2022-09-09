@@ -14,7 +14,7 @@ function request<TResponse> (
     .then(res => res.json())
     .then(data => data as TResponse)
 }
-
+try {
   request<RawCpData[]>(
     'https://theunitedstates.io/congress-legislators/legislators-current.json',
     {method: 'GET'})
@@ -27,23 +27,32 @@ function request<TResponse> (
           title: recentTermData.type === 'rep' ? 'Representative' : 'Senator',
           party: recentTermData.party,
           state: recentTermData.state,
-          yearsServed: parseInt(cp.terms[0].start.slice(0, 3))
+          yearsServed: new Date().getFullYear() - parseInt(cp.terms[0].start.slice(0, 4))
         }
         return ncp
       })
     })
+} catch (e) {
+  console.log(e)
+}
+  
 
 
-router.get('/', async (req: Request <RequestParams>, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
+  let query: RequestParams = {
+    currPage: parseInt(<string>req.query.currPage),
+    limit: parseInt(<string>req.query.limit),
+    offset: parseInt(<string>req.query.offset),
+    sortBy: <keyof Congressperson>req.query.sortBy,
+    filter: <string>req.query.filter
+    }
   let data: Congressperson[] = [...congressData]
-  if (req.params.filter.length > 0) {
-    //Filter data
-  }
+  // if (query.filter.length > 0) {
+  //   //Filter data
+  // }
 
-  let sortBy: keyof Congressperson = req.params.sortBy
-  //data.sort((a, b) => a[sortBy] - b[sortBy])
-
-  res.send(data.slice(req.params.offset, req.params.offset + req.params.limit))
+  data.sort((a, b) => <any>a[query.sortBy] - <any>b[query.sortBy])
+  res.send(data.slice(query.offset, query.offset + query.limit))
 })
 
 module.exports = router
