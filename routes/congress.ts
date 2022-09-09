@@ -2,6 +2,7 @@ import express, {Request, Response} from 'express'
 import Congressperson from '../models/Congressperson'
 import RawCpData from '../models/RawCpData'
 import RequestParams from '../models/RequestParams'
+
 const router = express.Router()
 
 let congressData: Congressperson[]
@@ -14,6 +15,7 @@ function request<TResponse> (
     .then(res => res.json())
     .then(data => data as TResponse)
 }
+
 try {
   request<RawCpData[]>(
     'https://theunitedstates.io/congress-legislators/legislators-current.json',
@@ -23,7 +25,7 @@ try {
         let recentTermData = cp.terms[cp.terms.length - 1]
         let ncp: Congressperson = {
           id: cp.id.bioguide,
-          name: cp.name.official_full,
+          name: cp.name.official_full || '',
           title: recentTermData.type === 'rep' ? 'Representative' : 'Senator',
           party: recentTermData.party,
           state: recentTermData.state,
@@ -39,20 +41,42 @@ try {
 
 
 router.get('/', async (req: Request, res: Response) => {
-  let query: RequestParams = {
-    currPage: parseInt(<string>req.query.currPage),
-    limit: parseInt(<string>req.query.limit),
-    offset: parseInt(<string>req.query.offset),
-    sortBy: <keyof Congressperson>req.query.sortBy,
-    filter: <string>req.query.filter
-    }
+  if (!congressData) return null
+  let query: RequestParams
+  if (validateInput(req)) {
+     query = {
+      currPage: parseInt(<string>req.query.currPage),
+      limit: parseInt(<string>req.query.limit),
+      offset: parseInt(<string>req.query.offset),
+      sortBy: <keyof Congressperson>req.query.sortBy,
+      filter: <string>req.query.filter
+      }
+  } else {
+    throw new Error('invalid request')
+  }
+  
   let data: Congressperson[] = [...congressData]
-  // if (query.filter.length > 0) {
-  //   //Filter data
-  // }
+  if (query.filter.length > 0) {
+    console.log(query.filter)
+    data = data.filter(cp => {
+      return cp.name.toLowerCase().includes(query.filter.toLowerCase())
+    })
+  }
 
   data.sort((a, b) => <any>a[query.sortBy] - <any>b[query.sortBy])
   res.send(data.slice(query.offset, query.offset + query.limit))
 })
+
+const validateInput = (req: Request): boolean => {
+    let validSortBy = ['id', 'image', 'name', 'title', 'party', 'state', 'yearsServed']
+    let isValid =  (typeof req.query.currPage === 'string' &&
+      typeof req.query.limit === 'string' &&
+      typeof req.query.offset === 'string' &&
+      typeof req.query.sortBy === 'string' &&
+      validSortBy.includes(req.query.sortBy) &&
+      typeof req.query.filter === 'string'
+      )
+    return isValid
+}
 
 module.exports = router
