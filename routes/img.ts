@@ -8,7 +8,7 @@ const myCache = new NodeCache()
 const router = express.Router()
 
 router.get('/:id', async (req: Request, res: Response) => {
-  const id = req.params.id
+  let id = req.params.id
   if (!myCache.has(id)) {
     try {
       const input = (await axios({ url: `https://theunitedstates.io/images/congress/450x550/${id}.jpg`,
@@ -27,7 +27,7 @@ router.get('/:id', async (req: Request, res: Response) => {
           .resize(450, 550)
           .webp()
           .toBuffer()
-    
+        id = 'error'
         myCache.set(id, img)
       } catch (e) {
         return res.status(400).send()

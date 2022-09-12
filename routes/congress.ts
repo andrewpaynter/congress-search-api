@@ -60,7 +60,8 @@ router.get('/', async (req: Request, res: Response) => {
     return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
   })
   if (query.sortReverse) data.reverse()
-  res.send(data.slice(query.offset, query.offset + query.limit))
+  let end = query.offset + query.limit < data.length? query.offset + query.limit : data.length
+  res.send(data.slice(query.offset, end))
 })
 
 
