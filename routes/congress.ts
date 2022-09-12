@@ -61,7 +61,7 @@ router.get('/', async (req: Request, res: Response) => {
   })
   if (query.sortReverse) data.reverse()
   let end = query.offset + query.limit < data.length? query.offset + query.limit : data.length
-  res.send(data.slice(query.offset, end))
+  res.header({finalItem: query.offset + query.limit > data.length}).status(200).send(data.slice(query.offset, end))
 })
 
 
