@@ -1,8 +1,7 @@
 import express, {Request, Response} from 'express'
 import Congressperson from '../models/Congressperson'
 import RawCpData from '../models/RawCpData'
-import RequestParams from '../models/RequestParams'
-
+import { translateRequestParams, validateRawRequestParams } from '../models/RawRequestParams'
 const router = express.Router()
 
 let congressData: Congressperson[]
@@ -41,44 +40,28 @@ try {
 
 
 router.get('/', async (req: Request, res: Response) => {
-  if (!congressData) {
+  if (!congressData)
     return res.status(503).send()
-  }
-  let query: RequestParams
-  if (validateInput(req)) {
-     query = {
-      currPage: parseInt(<string>req.query.currPage),
-      limit: parseInt(<string>req.query.limit),
-      offset: parseInt(<string>req.query.offset),
-      sortBy: <keyof Congressperson>req.query.sortBy,
-      filter: <string>req.query.filter
-      }
-  } else {
+  if (!validateRawRequestParams(req))
     return res.status(400).send()
-  }
-  
+  let query = translateRequestParams(req)
   let data: Congressperson[] = [...congressData]
   if (query.filter.length > 0) {
-    console.log(query.filter)
     data = data.filter(cp => {
       return cp.name.toLowerCase().includes(query.filter.toLowerCase())
     })
   }
 
-  data.sort((a, b) => <any>a[query.sortBy] - <any>b[query.sortBy])
+  data.sort((a, b) => {
+    let nameA = a[query.sortBy]
+      if (typeof nameA === 'string') nameA = nameA.toUpperCase()
+    let nameB = b[query.sortBy]
+      if (typeof nameB === 'string') nameB = nameB.toUpperCase()
+    return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
+  })
   res.send(data.slice(query.offset, query.offset + query.limit))
 })
 
-const validateInput = (req: Request): boolean => {
-    let validSortBy = ['id', 'image', 'name', 'title', 'party', 'state', 'yearsServed']
-    let isValid =  (typeof req.query.currPage === 'string' &&
-      typeof req.query.limit === 'string' &&
-      typeof req.query.offset === 'string' &&
-      typeof req.query.sortBy === 'string' &&
-      validSortBy.includes(req.query.sortBy) &&
-      typeof req.query.filter === 'string'
-      )
-    return isValid
-}
+
 
 module.exports = router

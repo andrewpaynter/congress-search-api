@@ -1,22 +1,29 @@
 import express, {Request, Response} from 'express'
-import imagemin from 'imagemin'
-import imageminWebp from 'imagemin-webp'
 import fs from 'fs'
+import sharp from 'sharp'
+import NodeCache from 'node-cache'
+import axios from "axios";
+const myCache = new NodeCache()
 
 const router = express.Router()
 
 router.get('/:id', async (req: Request, res: Response) => {
-  //if path does not exist, grab image and convert to webp and save, then return
   const id = req.params.id
-  if (!fs.existsSync(`../cache-images/${id}.webp`)) {
-    //grab image and convert to webp. save at appropriate url
-    await imagemin([`https://theunitedstates.io/images/congress/450x550/${id}.jpg`], {
-      destination: '../cache-images',
-      plugins: [imageminWebp({quality: 50})]
-    })
+  if (!myCache.has(id)) {
+    try {
+      const input = (await axios({ url: `https://theunitedstates.io/images/congress/450x550/${id}.jpg`,
+        responseType: "arraybuffer" })).data as Buffer
+      const img = await sharp(input)
+        .resize(450, 550)
+        .webp()
+        .toBuffer()
+  
+      myCache.set(id, img)
+    } catch(e) {
+      return res.status(404).send()
+    }
   }
-  //if path exists, return the image as a stream
-
+  res.status(200).send(myCache.get(id))
 })
 
 
