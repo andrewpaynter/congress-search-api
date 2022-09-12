@@ -41,7 +41,9 @@ try {
 
 
 router.get('/', async (req: Request, res: Response) => {
-  if (!congressData) return null
+  if (!congressData) {
+    return res.status(503).send()
+  }
   let query: RequestParams
   if (validateInput(req)) {
      query = {
@@ -52,7 +54,7 @@ router.get('/', async (req: Request, res: Response) => {
       filter: <string>req.query.filter
       }
   } else {
-    throw new Error('invalid request')
+    return res.status(400).send()
   }
   
   let data: Congressperson[] = [...congressData]

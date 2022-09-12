@@ -2,9 +2,9 @@
   "name": "congress-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.ts",
   "scripts": {
-    "start": "nodemon index.ts"
+    "start": "nodemon app.ts"
   },
   "repository": {
     "type": "git",
@@ -26,7 +26,11 @@
     "typescript": "^4.8.2"
   },
   "dependencies": {
+    "@types/imagemin": "^8.0.0",
+    "@types/imagemin-webp": "^7.0.0",
     "cors": "^2.8.5",
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "imagemin": "^7.0.1",
+    "imagemin-webp": "^6.0.0"
   }
 }
