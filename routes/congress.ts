@@ -59,6 +59,7 @@ router.get('/', async (req: Request, res: Response) => {
       if (typeof nameB === 'string') nameB = nameB.toUpperCase()
     return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
   })
+  if (query.sortReverse) data.reverse()
   res.send(data.slice(query.offset, query.offset + query.limit))
 })
 
