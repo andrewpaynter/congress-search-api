@@ -1,5 +1,4 @@
 import express, {Request, Response} from 'express'
-import fs from 'fs'
 import sharp from 'sharp'
 import NodeCache from 'node-cache'
 import axios from "axios";

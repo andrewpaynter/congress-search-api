@@ -1,5 +1,4 @@
-import {Request, Response} from 'express'
-import Congressperson from './Congressperson'
+import {Request} from 'express'
 import RequestParams from './RequestParams'
 
 export interface RawRequestParams {
