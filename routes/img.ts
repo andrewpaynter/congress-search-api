@@ -33,7 +33,7 @@ router.get('/:id', async (req: Request, res: Response) => {
       }
     }
   }
-  res.status(200).send(imgCache.get(id))
+  res.header({'Content-Type': 'image/webp'}).status(200).send(imgCache.get(id))
 })
 
 

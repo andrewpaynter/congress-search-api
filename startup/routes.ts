@@ -6,7 +6,7 @@ const img = require( '../routes/img')
 
 module.exports = function (app: Express.Application) {
   app.use(express.json())
-  app.use(cors({ origin: ['http://localhost:3000'], credentials: true, exposedHeaders: 'finalItem'}))
+  app.use(cors({ origin: ['http://localhost:3000'], credentials: true, exposedHeaders: 'finalItem,Content-Type'}))
 
   app.use('/api/congress', congress)
   app.use('/api/img', img)
