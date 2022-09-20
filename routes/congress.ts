@@ -64,7 +64,8 @@ router.get('/', async (req: Request, res: Response) => {
 
   let end = query.offset + query.limit < data.length? query.offset + query.limit : data.length
   res
-  .header({finalItem: query.offset + query.limit > data.length})
+  .header({'Content-Type': 'application/json',
+    finalItem: query.offset + query.limit > data.length})
   .status(200)
   .send(data.slice(query.offset, end))
 })
