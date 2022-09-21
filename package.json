@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "start": "npx ts-node app.ts"
+    "start": "node ./dist/app.js",
+    "build": "tsc"
   },
   "engines" : {
     "node": "18.0.0"
