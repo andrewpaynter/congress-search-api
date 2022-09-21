@@ -7,7 +7,7 @@
     "start": "node ./dist/app.js",
     "build": "tsc"
   },
-  "engines" : {
+  "engines": {
     "node": "18.0.0"
   },
   "repository": {
@@ -26,7 +26,6 @@
     "@types/express": "^4.17.13",
     "@types/node": "^18.7.15",
     "nodemon": "^2.0.19",
-    "ts-node": "^10.9.1",
     "typescript": "^4.8.2"
   },
   "dependencies": {
