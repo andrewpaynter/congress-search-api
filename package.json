@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "start": "npx ts-node app.ts"
+    "start": "ts-node app.ts"
   },
   "repository": {
     "type": "git",
