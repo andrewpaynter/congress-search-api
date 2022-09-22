@@ -1,7 +1,6 @@
 import express from 'express'
 import cors from 'cors'
 import ExpressApp from '../models/ExpressApp'
-require('custom-env').env('production')
 const congress = require( '../routes/congress')
 const img = require( '../routes/img')
 
