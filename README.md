@@ -1,6 +1,6 @@
 # Congress-Searcher API
 
-This project is a tool to search current members of congress, sort by name, party, state, title,, and years served, and see images of each congressperson. This project features paginated results and image cacheing from the backend for quick and fluid use.
+This project is a tool to search current members of congress, sort by name, party, state, title, and years served, and see images of each congressperson. This project features paginated results and image cacheing from the backend for quick and fluid use.
 
 Technologies:
 TypeScript
